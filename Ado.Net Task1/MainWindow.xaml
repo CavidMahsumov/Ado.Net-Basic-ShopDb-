@@ -1,0 +1,22 @@
+﻿<Window x:Class="Ado.Net_Task1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Ado.Net_Task1"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="800" Width="1100">
+    <Grid>
+        <StackPanel Background="Aqua">
+            <ComboBox FontSize="30" Width="900" Margin="0,20,0,0"  Height="50" Name="TableCombobox" SelectionChanged="TableCombobox_SelectionChanged"></ComboBox>
+            <DataGrid FontSize="40" Margin="0,50,0,0" Width="900" Name="MyGrid" Height="450" SelectionChanged="MyGrid_SelectionChanged"  ></DataGrid>
+            <WrapPanel>
+            <Button FontFamily="Comic Sans MS" Width="250" Margin="20,20,0,0"  Height="115" Background="DarkCyan" FontSize="30" Click="Button_Click">BUY</Button>
+                <Button FontFamily="Comic Sans MS" Width="250" Margin="20,20,0,0" Height="115" Background="DarkCyan" FontSize="30" Click="Button_Click_1">DELETE</Button>
+                <Button FontFamily="Comic Sans MS" Width="250" Margin="20,20,0,0" Height="115" Background="DarkCyan" FontSize="30">ADD PRODUCT</Button>
+                <Button FontFamily="Comic Sans MS" Width="250" Margin="20,20,0,0" Height="115" Background="DarkCyan" FontSize="30">UPDATE</Button>
+                
+            </WrapPanel>
+        </StackPanel>
+    </Grid>
+</Window>
