@@ -25,7 +25,6 @@ namespace Ado.Net_Task1
     {
         SqlConnection conn;
         string cs = "";
-        DataTable table;
         SqlDataReader reader;
         DataSet dataSet;
         SqlDataAdapter dataadapter;
@@ -137,24 +136,28 @@ namespace Ado.Net_Task1
 
                 SqlCommand command1 = new SqlCommand("sp_InsertOrderDetails", conn);
                 command1.CommandType = CommandType.StoredProcedure;
-                var c1p = new SqlParameter();
-                c1p.Value = count1;
-                c1p.ParameterName = "@OrderId";
-                c1p.SqlDbType = SqlDbType.Int;
-                command1.Parameters.Add(c1p);
 
 
-                var c2p = new SqlParameter();
-                c2p.Value = ProductName;
-                c2p.ParameterName = @"ProductName";
-                c2p.SqlDbType = SqlDbType.NVarChar;
-                command1.Parameters.Add(c2p);
+    
+
 
                 var c3p = new SqlParameter();
-                c3p.Value = price;
-                c3p.ParameterName = "@ProductPrice";
+                c3p.Value = ProductName;
+                c3p.ParameterName = @"ProductName";
                 c3p.SqlDbType = SqlDbType.NVarChar;
                 command1.Parameters.Add(c3p);
+
+                var c4p = new SqlParameter();
+                c4p.Value = price;
+                c4p.ParameterName = "@ProductPrice";
+                c4p.SqlDbType = SqlDbType.NVarChar;
+                command1.Parameters.Add(c4p);
+
+                var c5p = new SqlParameter();
+                c5p.Value = Description;
+                c5p.ParameterName = "@ProductDescription";
+                c5p.SqlDbType = SqlDbType.NVarChar;
+                command1.Parameters.Add(c5p);
 
                 command1.ExecuteNonQuery();
 
@@ -182,7 +185,7 @@ namespace Ado.Net_Task1
 
                 command.ExecuteNonQuery(); 
 
-                RefreshTable();
+
             }
         }
     }
