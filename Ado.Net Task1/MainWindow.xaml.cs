@@ -23,6 +23,7 @@ namespace Ado.Net_Task1
     /// </summary>
     public partial class MainWindow : Window
     {
+        DataTable table;
         SqlConnection conn;
         string cs = "";
         SqlDataReader reader;
@@ -35,6 +36,7 @@ namespace Ado.Net_Task1
         string Description;
         int count;
         int count1;
+        string customerid;
 
         public MainWindow()
         {
@@ -51,6 +53,7 @@ namespace Ado.Net_Task1
 
             using (conn = new SqlConnection())
             {
+
                 MyGrid.ItemsSource = null;
                 SqlCommandBuilder sqlCommandBuilder = new SqlCommandBuilder(dataadapter);
                 dataadapter.Fill(dataSet);
@@ -58,6 +61,50 @@ namespace Ado.Net_Task1
                 MyGrid.ItemsSource = dataSet.Tables[0].DefaultView;
 
                 sqlCommandBuilder.GetUpdateCommand();
+
+
+            }
+        }
+
+        public void RefreshAfterRemove()
+        {
+            using (conn = new SqlConnection())
+            {
+                conn.ConnectionString = cs;
+                conn.Open();
+                SqlCommand command = new SqlCommand();
+                command.CommandText = $"select*from  {TableCombobox.SelectedItem.ToString()} ";
+                command.Connection = conn;
+                table = new DataTable();
+
+                bool hasColumnAdded = false;
+                using (reader = command.ExecuteReader())
+                {
+
+                    while (reader.Read())
+                    {
+                        if (!hasColumnAdded)
+                        {
+
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                table.Columns.Add(reader.GetName(i));
+                            }
+                            hasColumnAdded = true;
+                        }
+                        DataRow row = table.NewRow();
+                        for (int i = 0; i < reader.FieldCount; i++)
+                        {
+                            row[i] = reader[i];
+                        }
+                        table.Rows.Add(row);
+                    }
+                    MyGrid.ItemsSource = table.DefaultView;
+
+                }
+
+
+
             }
         }
 
@@ -66,7 +113,6 @@ namespace Ado.Net_Task1
             using (conn = new SqlConnection())
             {
                 conn.ConnectionString = cs;
-                conn.Open();
 
                 dataSet = new DataSet();
                 dataadapter = new SqlDataAdapter($@"select *from {TableCombobox.SelectedItem.ToString()}", conn);
@@ -83,17 +129,32 @@ namespace Ado.Net_Task1
 
             try
             {
-                if (DataRowView != null)
+                if (TableCombobox.SelectedItem.ToString() == "Products")
                 {
-                    ProductId = DataRowView["Id"].ToString();
-                    ProductName = DataRowView["Name"].ToString();
-                    price = DataRowView["Price"].ToString();
-                    Description = DataRowView["Description"].ToString();
+
+                    if (DataRowView != null)
+                    {
+                        ProductId = DataRowView["Id"].ToString();
+                        ProductName = DataRowView["Name"].ToString();
+                        price = DataRowView["Price"].ToString();
+                        Description = DataRowView["Description"].ToString();
+
+                    }
+                }
+                else if (TableCombobox.SelectedItem.ToString() == "Customers")
+                {
+
+                    if (DataRowView != null)
+                    {
+                        customerid = DataRowView["Id"].ToString();
+                      
+
+                    }
 
                 }
 
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
@@ -138,7 +199,7 @@ namespace Ado.Net_Task1
                 command1.CommandType = CommandType.StoredProcedure;
 
 
-    
+
 
 
                 var c3p = new SqlParameter();
@@ -173,20 +234,47 @@ namespace Ado.Net_Task1
                 conn.ConnectionString = cs;
                 conn.Open();
 
-                
-                SqlCommand command = new SqlCommand("sp_DeleteProduct", conn);
-                command.CommandType = CommandType.StoredProcedure;
-
-                var param1 = new SqlParameter();
-                param1.Value = ProductId;
-                param1.ParameterName = "@ProductId";
-                param1.SqlDbType = SqlDbType.Int;
-                command.Parameters.Add(param1);
-
-                command.ExecuteNonQuery(); 
+                if (TableCombobox.SelectedItem.ToString() == "Products")
+                {
 
 
+                    SqlCommand command = new SqlCommand("sp_DeleteProduct", conn);
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    var param1 = new SqlParameter();
+                    param1.Value = ProductId;
+                    param1.ParameterName = "@ProductId";
+                    param1.SqlDbType = SqlDbType.Int;
+                    command.Parameters.Add(param1);
+
+                    command.ExecuteNonQuery();
+
+
+                    RefreshAfterRemove();
+                }
+                else if (TableCombobox.SelectedItem.ToString() == "Customers")
+                {
+                    SqlCommand command = new SqlCommand("sp_DeleteCustomer", conn);
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    var param1 = new SqlParameter();
+                    param1.Value = customerid;
+                    param1.ParameterName = "@id";
+                    param1.SqlDbType = SqlDbType.Int;
+                    command.Parameters.Add(param1);
+
+                    command.ExecuteNonQuery();
+
+
+                    RefreshAfterRemove();
+                }
+                else
+                {
+                    MessageBox.Show("Only Delete Customer And Products");
+                }
             }
+
         }
     }
 }
+
